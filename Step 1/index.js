@@ -17,12 +17,15 @@ async function render() {
 
 function callAutoRating() {
     autoPremium += 200;
+    multiproductDiscount =  0.05 * homePremium + 0.10 * autoPremium;
+    premium = autoPremium + homePremium - multiproductDiscount;
 
 }
 
 function callHomeRating() {
     homePremium += 150;
-
+    multiproductDiscount =  0.05 * homePremium + 0.10 * autoPremium;
+    premium = autoPremium + homePremium - multiproductDiscount;
 }
 
 render();
