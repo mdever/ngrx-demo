@@ -3,13 +3,15 @@ const { Observable, Subject } = require('rxjs');
 
 let autoPremium = 500;
 let homePremium = 1000;
-let premium = autoPremium + homePremium;
+let multiproductDiscount = 0.05 * homePremium + 0.10 * autoPremium;
+let premium = autoPremium + homePremium - multiproductDiscount;
 
 async function render() {
     let _ = prompt();
     console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     console.log(`Auto Premium: ${autoPremium}`);
     console.log(`Home Premium: ${homePremium}`);
+    console.log(`Multiproduct Discount: ${multiproductDiscount}`);
     console.log(`The premium is ${premium}`);
 }
 
