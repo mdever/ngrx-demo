@@ -1,12 +1,27 @@
 const prompt = require('prompt-sync')();
-const { Observable, Subject } = require('rxjs');
+const { Observable, Subject, of, BehaviorSubject, combineLatest } = require('rxjs');
+const { map, withLatestFrom } = require('rxjs/operators');
 
-let autoPremium = 500;
-let homePremium = 1000;
-let multiproductDiscount = 0.05 * homePremium + 0.10 * autoPremium;
-let premium = autoPremium + homePremium - multiproductDiscount;
+let autoPremium$ = new BehaviorSubject(500);
+let homePremium$ = new BehaviorSubject(1000);
+let multiproductDiscount$ = combineLatest([autoPremium$, homePremium$]).pipe(
+    map(([autoPremium, homePremium]) => {
+        return autoPremium * 0.10 + homePremium * 0.05;
+    })
+);
+let premium$ = combineLatest([autoPremium$, homePremium$]).pipe(
+    withLatestFrom(multiproductDiscount$),
+    map(([autoPremium, homePremium, multiproductDiscount]) => {
+        return autoPremium + homePremium - multiproductDiscount;
+    })
+);
 
-async function render() {
+combineLatest([autoPremium$, homePremium$, multiproductDiscount$, premium$])
+    .subscribe(([autoPremium, homePremium, multiproductDiscount, premium]) => {
+        render(autoPremium, homePremium, multiproductDiscount, premium);
+    });
+
+async function render(autoPremium, homePremium, multiproductDiscount, premium) {
     let _ = prompt();
     console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     console.log(`Auto Premium: ${autoPremium}`);
@@ -16,21 +31,14 @@ async function render() {
 }
 
 function callAutoRating() {
-    autoPremium += 200;
-    multiproductDiscount =  0.05 * homePremium + 0.10 * autoPremium;
-    premium = autoPremium + homePremium - multiproductDiscount;
+    autoPremium$.next(700);
 
 }
 
 function callHomeRating() {
-    homePremium += 150;
-    multiproductDiscount =  0.05 * homePremium + 0.10 * autoPremium;
-    premium = autoPremium + homePremium - multiproductDiscount;
+    homePremium$.next(1150);
 }
 
-render();
 callAutoRating();
-render();
 callHomeRating();
-render();
 
